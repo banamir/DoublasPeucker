@@ -3,24 +3,102 @@ package douglas.peucker;
 import java.awt.geom.Point2D;
 import java.util.*;
 
-public class DPAlgorithm extends VectorUtils {
+import static  douglas.peucker.VectorUtils.*;
+
+public class DPAlgorithm  {
 
     private Point2D[] polyline;
 
     public DPAlgorithm(Point2D[] polyline){
+
         if(polyline == null && polyline.length > 2)
             throw new IllegalArgumentException("Polyline can't be null and have at lest two point");
+
         this.polyline = polyline;
     }
 
-    public final class PolylinePartInfo{
+    public Point2D[] simple(double eps){
+
+         return simpleRecursive(new Range(0,polyline.length-1),eps).toArray(new Point2D[0]);
+    }
+
+    protected List<Point2D> simpleRecursive(Range range, double eps){
+
+        LinkedList<Point2D> result = new LinkedList<Point2D>();
+
+        if(range.getMaxDistance() < eps){
+            result.add(polyline[range.getStart()]);
+            result.add(polyline[range.getEnd()]);
+        } else {
+            result.addAll(simpleRecursive(new Range(range.getStart(), range.getMaxPoint()), eps));
+            result.pollLast();
+            result.addAll(simpleRecursive(new Range(range.getMaxPoint(), range.getEnd()),      eps));
+        }
+
+        return result;
+    }
+
+    public Point2D[] simple(int k){
+
+        Point2D[] result = new Point2D[k];
+
+        PriorityQueue<Range> pq = new PriorityQueue<Range>(polyline.length);
+        pq.add(new Range(0, polyline.length - 1));
+
+        for(int i=2; i<k; i++){
+            Range range = pq.poll();
+            if(range.getEnd() ==  range.getStart()) continue;
+            pq.add(new Range(range.getStart(), range.getMaxPoint()));
+            pq.add(new Range(range.getMaxPoint(),range.getEnd()));
+        }
+
+        List<Range> rangeList = new ArrayList<Range>();
+        rangeList.addAll(rangeList);
+        Collections.sort(rangeList, new RangeStartComparator());
+
+        int i=0;
+        for(Range rang : rangeList){
+            result[i++] = polyline[rang.getStart()];
+        }
+        result[i] = polyline[polyline.length-1];
+
+        return result;
+    }
+
+    public List<Point2D> iterative(double eps){
+
+        List<Point2D> result = new ArrayList<Point2D>();
+
+        result.add(polyline[0]);
+
+        int start = 0;
+
+        for(int i = 1; i < polyline.length; i++ ){
+            Range info = new Range(start, i);
+            if(info.getMaxDistance() >  eps){
+                start = i-1;
+                result.add(polyline[i-1]);
+            }
+        }
+
+        result.add(polyline[polyline.length - 1]);
+
+        return  result;
+    }
+
+    public List<Point2D> robust(double eps){
+        //TODO: Implement robust variant of the algorithm
+        return null;
+    }
+
+    public final class Range implements Comparable<Range> {
 
         private final int start, end;
 
         private double max_distance = -1.0;
         private int    max_point = -1;
 
-        public PolylinePartInfo(int start, int end){
+        public Range(int start, int end){
 
             if(0 > start || start > end || end >= polyline.length )
                 throw new IllegalArgumentException("Wrong position of part start");
@@ -40,7 +118,7 @@ public class DPAlgorithm extends VectorUtils {
             return (max_point == -1)? findMaxPoint().max_distance : max_distance;
         }
 
-        private PolylinePartInfo findMaxPoint(){
+        private Range findMaxPoint(){
             double disatance = 0;
 
             max_distance = 0;
@@ -55,111 +133,17 @@ public class DPAlgorithm extends VectorUtils {
             return this;
         }
 
-    }
-
-
-    public List<Point2D> simple(double eps){
-
-        return simpleRecursive(new PolylinePartInfo(0,polyline.length-1),eps);
-    }
-
-    public List<Point2D> simpleRecursive(PolylinePartInfo info, double eps){
-
-        LinkedList<Point2D> result = new LinkedList<Point2D>();
-
-        if(info.getMaxDistance() < eps){
-            result.add(polyline[info.getStart()]);
-            result.add(polyline[info.getEnd()]);
-        } else {
-            result.addAll(simpleRecursive(new PolylinePartInfo(info.getStart(),    info.getMaxPoint()), eps));
-            result.pollLast();
-            result.addAll(simpleRecursive(new PolylinePartInfo(info.getMaxPoint(), info.getEnd()),      eps));
+        public int compareTo(Range range) {
+            return -Double.compare(this.getMaxDistance(), range.getMaxDistance());
         }
 
-        return result;
-
     }
 
-    public List<Point2D> simple(int k){
+    public static class RangeStartComparator implements Comparator<Range> {
 
-        List<Point2D> result = new ArrayList<Point2D>();
-
-        PriorityQueue<PolylinePartInfo> pq =
-                new PriorityQueue<PolylinePartInfo>(polyline.length,
-                        new Comparator<PolylinePartInfo>() {
-                            public int compare(PolylinePartInfo info1, PolylinePartInfo info2) {
-                                return -Double.compare(info1.getMaxDistance(), info2.getMaxDistance());
-                            }
-                        });
-        pq.add(new PolylinePartInfo(0, polyline.length - 1));
-
-        for(int i=2; i<k; i++){
-            PolylinePartInfo info = pq.poll();
-            if(info.getEnd() ==  info.getStart()) continue;
-            pq.add(new PolylinePartInfo(info.getStart(),info.getMaxPoint()));
-            pq.add(new PolylinePartInfo(info.getMaxPoint(),info.getEnd()));
+        public int compare(Range range1, Range range2) {
+            return 0;
         }
-
-        PolylinePartInfo[] infoArray = {};
-        infoArray = pq.toArray(infoArray);
-        Arrays.sort(infoArray,
-                new Comparator<PolylinePartInfo>() {
-                    public int compare(PolylinePartInfo info1, PolylinePartInfo info2) {
-                        return Integer.compare(info1.getStart(), info2.getStart());
-                    }
-                });
-
-        for(PolylinePartInfo info :infoArray){
-            result.add(polyline[info.getStart()]);
-        }
-        result.add(polyline[polyline.length-1]);
-
-        return result;
     }
-
-    public List<Point2D> iterative(double eps){
-
-        List<Point2D> result = new ArrayList<Point2D>();
-
-        result.add(polyline[0]);
-
-        int start = 0;
-
-        for(int i = 1; i < polyline.length; i++ ){
-            PolylinePartInfo info = new PolylinePartInfo(start, i);
-            if(info.getMaxDistance() >  eps){
-                start = i-1;
-                result.add(polyline[i-1]);
-            }
-        }
-
-        result.add(polyline[polyline.length - 1]);
-
-        return  result;
-    }
-
-    public List<Point2D> robust(double eps){
-        //TODO: Implement robust variant of this method
-        return null;
-    }
-
-    public double maxDistance(Point2D[] points){
-
-        int i = 0;
-        double max_distanse = 0, distanse = 0;
-
-        for(Point2D point :this.polyline){
-
-            if(i+1 < points.length && Double.compare(point.getX(), points[i+1].getX()) == 0
-                                   && Double.compare(point.getY(), points[i+1].getY()) == 0)
-            i++;
-            distanse = distanseToSigment(point, points[i],points[i+1]);
-            if(distanse > max_distanse) max_distanse = distanse;
-        }
-
-        return max_distanse;
-    }
-
-
 
 }

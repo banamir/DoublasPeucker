@@ -12,11 +12,6 @@ import java.awt.geom.Point2D;
 
 public class VectorUtilsTest  {
 
-    public static void assertPoint2DEquals(Point2D expected, Point2D actual, double delta) {
-        assertEquals(expected.getX(),actual.getX(), delta);
-        assertEquals(expected.getY(),actual.getY(), delta);
-    }
-
     private static final double DELTA = 1e-15;
 
     @Test

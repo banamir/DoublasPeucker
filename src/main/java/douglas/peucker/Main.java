@@ -20,9 +20,9 @@ public class Main {
 
         Point2D[] polyline= {}, simplified = {};
         int n = 0, m = 0, k = 0;
+
         double eps;
-        double max_x = Double.MIN_VALUE, min_x = Double.MAX_VALUE,
-               max_y = Double.MIN_VALUE, min_y = Double.MAX_VALUE ;
+        double max_x, min_x, max_y, min_y;
         double offestX, offestY;
 
         try{
@@ -56,11 +56,13 @@ public class Main {
                     if(y < min_y) min_y = y;
                     polyline[j] = new Point2D.Double(x,y);
                 }
+
+                DPAlgorithm dpa = new DPAlgorithm(polyline);
+
                 offestX = (max_x-min_x)*0.2;
                 offestY = (max_y-min_y)*0.2;
 
                 Draw draw = new Draw(name);
-                draw = draw;
                 draw.setCanvasSize(800, 800);
 
                 draw.setXscale(min_x - offestX, max_x + offestX);
@@ -74,12 +76,10 @@ public class Main {
 
                 draw.setPenDash();
 
-                simplified = new Point2D[]{};
-                simplified = (new DPAlgorithm(polyline).simple(eps)).toArray(simplified);
+                simplified = dpa.simple(eps);
                 draw.polyline(simplified);
                 draw.setPenColor(Color.RED);
-                simplified = new Point2D[]{};
-                simplified =  (new DPAlgorithm(polyline).simple(k)).toArray(simplified);
+                simplified = dpa.simple(k);
                 draw.polyline(simplified);
             }
 
