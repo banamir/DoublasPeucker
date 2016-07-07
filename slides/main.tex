@@ -5,12 +5,20 @@
 \usepackage{booktabs}
 \usepackage[scale=2]{ccicons}
 
+\usepackage{graphicx}
+\usepackage[outdir=./img/]{epstopdf}
+\epstopdfsetup{update}
+
+
 \usepackage{pgfplots}
 \usepgfplotslibrary{dateplot}
 \usepackage{movie15}
 
+
 \usepackage{xspace}
 \newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+
+\usepackage{hyperref}
 
 \title{Douglass-Peucker Algorithm}
 \subtitle{A simplification of polyline}
@@ -32,10 +40,53 @@
 \section{Introduction}
 
 \begin{frame}{Application}
+	\begin{itemize}
+		\item \textbf{Cartography:} map generalization.
+		\item \textbf{Vector graphics.}
+		\item \textbf{Robotics:} denoising of range data acquired by a rotating range scanner. 
+	\end{itemize}
 \end{frame}
+
+\begin{frame}{Map Generalization}
+	\begin{figure}[h]
+			\center{\includegraphics[width=0.8\linewidth]{img/app01.png}}
+		\end{figure}
+\end{frame}
+
+\begin{frame}{Map Generalization}
+	\begin{figure}[h]
+			\center{\includegraphics[width=0.8\linewidth]{img/app02.png}}
+		\end{figure}
+\end{frame}
+
+\begin{frame}{Map Generalization}
+	\begin{figure}[h]
+			\center{\includegraphics[width=1.0\linewidth]{img/app03.jpg}}
+		\end{figure}
+\end{frame}
+
+
+
 \begin{frame}{Resources}
+	\begin{itemize}
+		\item \textit{C++ polyline simplification library and demo application} -- \url{http://psimpl.sourceforge.net/} 
+		\item \textit{JavaScript polyline simplification library} --  \url{http://mourner.github.io/simplify-js/}
+		\item \textit{Java implementation of DPA} -- \url{https://github.com/hgoebl/simplify-java}	
+		\item \textit{Matlab implementation of DPA} -- \url{https://www.mathworks.com/matlabcentral/fileexchange/21132-line-simplification/content/dpsimplify.m}	
+	\end{itemize}
 \end{frame}
 \begin{frame}{References}
+	\begin{itemize}
+		\item Urs Ramer 
+		 	  "An iterative procedure for the polygonal approximation of plane curves", 
+   			  \textit{Computer Graphics and Image Processing}, 1(3), 244–256 (1972)
+		\item David Douglas \& Thomas Peucker, 
+			  "Algorithms for the reduction of the number of points required to represent a digitized line or its caricature", 
+			  \textit{The Canadian Cartographer} 10(2), 112–122 (1973)
+		\item J.L.G. Pallero
+			  Robust line simplification on the plane
+			  \textit{Computers \& Geosciences} 61 (2013) 
+	\end{itemize}
 \end{frame}
 
 \section{Basic Idea}
@@ -52,9 +103,9 @@ is less or equal a given tolerance $\varepsilon$.
 
 \begin{alertblock}{Alternative Goal}
 Produce a simplified polyline  $Q=\{p_{i_{1}},p_{i_{2}},...,p_{i_{k}}\}$
-that  for each point $p_{l}\in P$ the distanse $\rho$ between $p_{l}$
+that for each point $p_{l}\in P$ the distance $\rho$ between $p_{l}$
 and the segment $\overline{p_{i_{j}}p_{i_{j+1}}}$ ($i_{j} < l < i_{j+1}$)   
-is  minimal for given $k$.
+is  minimal for a given number $k$.
 \end{alertblock}
 
 \end{frame}
@@ -63,14 +114,14 @@ is  minimal for given $k$.
 	\begin{itemize}
 		\item %The first and the last point in the original polyline are considered fixed.
 			  %These two fixed points linked form a straight line that will be called a \alert{base segment}.		
-			  The first $p_{s}$ and the last $p_{e}$ point  in the original polyline 
+			  The first and the last point ($p_{s}$ and $p_{e}$)  in the original polyline 
 			  linked form a straight line $\overline{p_sp_e}$ that will be called a \alert{base segment}.		
 		\item %The distances between each remaining point in the original line
 			  %and the base segment defined in the previous step are
 			  %computed. The points considered from the original line in this
 			  %step are those between the points that form the base segment.
-			  The point $p_k$ ($s <  k < e$) with the maximal distance $\rho_{max}$ 
-			  to the base segment defined in the previous step is finded. 
+			  The point $p_k$ ($s <  k < e$) with a maximal distance $\rho_{max}$ 
+			  to the base segment defined in the previous step is found. 
 		\item %The algorithm goes back to the first step, and considers now all
 			  %the previously added vertices to the output line as fixed (the
 			  %first and the last ones from the original line included). All of
@@ -93,10 +144,10 @@ is  minimal for given $k$.
 \begin{frame}{Solving of the Alternative Problem}
 	The solving of the alternative problem is similar to the initial technique.
 	\begin{itemize}
-		\item At each iteration algorithm finds base segment with maximal distance
-		and divdes it as in original algorithm. The resulting base segments are kept
-		for the next iterations.
-		\item It is usefull to use a priority queue for saving base segments.  
+		\item At each iteration the algorithm finds the base segment with a maximal distance
+		and divides it, as in the original algorithm. The resulting base segments are kept
+		for the subsequent iterations.
+		\item It is useful to use a priority queue for saving base segments.  
 	\end{itemize}
 	
 \end{frame}
@@ -105,6 +156,9 @@ is  minimal for given $k$.
 
 \begin{frame}{Vectors}
 
+		\begin{figure}[h]
+			\center{\includegraphics[width=0.5\linewidth]{img/vectors-1.eps}}
+		\end{figure}
 		
 		\begin{align*}
 				\overrightarrow{a} & = \overrightarrow{AB} = \overrightarrow{r_B} - \overrightarrow{r_A} \\
@@ -115,9 +169,12 @@ is  minimal for given $k$.
 \end{frame}
 
 \begin{frame}{Scalar Product}
+		\begin{figure}[h]
+			\center{\includegraphics[width=0.5\linewidth]{img/vectors-2.eps}}
+		\end{figure}
 		\begin{align*}
-				\overrightarrow{a} \cdot \overrightarrow{b} & = |\overrightarrow{a}||\overrightarrow{b}|\cdot\cos\alpha \\
-				& = x_a x_b + y_a y_b 
+				\overrightarrow{a} \cdot \overrightarrow{b} & = |\overrightarrow{a}||\overrightarrow{b}|\cdot\cos\alpha 
+				= x_a x_b + y_a y_b 
 		\end{align*}
 		\begin{align*}
 				|\overrightarrow{a}| = \sqrt{\overrightarrow{a} \cdot \overrightarrow{a}} = \sqrt{x_a^2 + y_a^2}
@@ -125,6 +182,9 @@ is  minimal for given $k$.
 \end{frame}
 
 \begin{frame}{Vector Product}
+		\begin{figure}[h]
+			\center{\includegraphics[width=0.5\linewidth]{img/vectors-2.eps}}
+		\end{figure}
 		\begin{align*}
 				\overrightarrow{a} \times \overrightarrow{b} & = |\overrightarrow{a}||\overrightarrow{b}|\cdot\sin\alpha \\
 				& = x_a y_b  - y_a x_b  
@@ -132,16 +192,22 @@ is  minimal for given $k$.
 \end{frame}
 
 \begin{frame}{Distance}
+		\begin{figure}[h]
+			\center{\includegraphics[width=0.5\linewidth]{img/vectors-3.eps}}
+		\end{figure}
 		\begin{align*}
 				\rho  = |\overrightarrow{r_1}|\sin\alpha = |\overrightarrow{r_1}|\frac{|r\times r_1|}{|r|}
 		\end{align*}
 \end{frame}
 \begin{frame}{Improving}
-		\begin{itemize}
-			\item if $r_2 >= \sqrt{r_1^2 + r^2}$ then $h=r_1$
-			\item if $r_1 >= \sqrt{r_2^2 + r^2}$ then $h=r_2$
-			\item else $\rho  = |\overrightarrow{r_1}|\sin\alpha = |\overrightarrow{r_1}|\frac{|r\times r_1|}{|r|}$
-	\end{itemize}
+		\begin{figure}[h]
+			\center{\includegraphics[width=0.5\linewidth]{img/vectors-4.eps}}
+		\end{figure}
+			\begin{itemize}
+				\item{ \makebox[5cm]{if $r_2 >= \sqrt{r_1^2 + r^2}$} then $\rho=r_1$}
+				\item{ \makebox[5cm]{if $r_1 >= \sqrt{r_2^2 + r^2}$} then $\rho=r_2$}
+				\item{ \makebox[2.5cm]{} else $\rho = |\overrightarrow{r_1}|\frac{|r\times r_1|}{|r|}$}
+			\end{itemize}
 \end{frame}
 
 \section{Algorithm features}
@@ -151,11 +217,11 @@ is  minimal for given $k$.
 	$$
 		T(n) = 2 T(n/2)+O(n)
 	$$
-	Using the \textbf{Master Theorem} we can find that complexity 
+	Using the \textbf{Master Theorem} we can find that the complexity is
 	$$
 		T(n) \in \Theta(n \log(n))
 	$$ 
-	The \textbf{worst case} of the algoritm is $O(n^2)$	  
+	The \textbf{worst-case} complexity is $O(n^2)$	  
 \end{frame}
 
 \begin{frame}{Optimality}
@@ -166,7 +232,7 @@ is  minimal for given $k$.
 		\end{minipage}
 		\hfill
 		\begin{minipage}[h]{0.49\linewidth}
-			\center{\includegraphics[width=0.5\linewidth]{img/optimal.png} \\ The optimal answer with respect to the nunmber of points}
+			\center{\includegraphics[width=0.5\linewidth]{img/optimal.png} \\ The optimal answer with respect to the number of points}
 		\end{minipage}
 	\end{figure}
 \end{frame}
@@ -226,6 +292,9 @@ is  minimal for given $k$.
 \end{frame}	
 
 \begin{frame}{Segment Intersection}
+	\begin{figure}[h]
+			\center{\includegraphics[width=0.4\linewidth]{img/intersection.eps}}
+	\end{figure}
 	\begin{align*}
 					&	\overrightarrow{AB}\times\overrightarrow{AC} \cdot \overrightarrow{AB}\times\overrightarrow{AD} \leq 0 \\
 	  \text{and } 	&	\overrightarrow{CD}\times\overrightarrow{CA} \cdot \overrightarrow{CD}\times\overrightarrow{CB} \leq 0 \\

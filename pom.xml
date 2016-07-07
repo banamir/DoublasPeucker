@@ -9,6 +9,10 @@
     <artifactId>douglas-peucker-algorithms</artifactId>
     <version>0.1</version>
 
+    <properties>
+        <java.version>1.7</java.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -26,5 +30,25 @@
             <version>4.0.0</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <finalName>dpa-${version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <index>true</index>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>douglas.peucker.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
