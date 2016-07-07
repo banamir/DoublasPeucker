@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Scanner;
 
 import static douglas.peucker.VectorUtils.distanseToSigment;
+import static douglas.peucker.VectorUtils.intersect;
 import static douglas.peucker.VectorUtils.scalarProduct;
 import static org.junit.Assert.*;
 
@@ -27,7 +28,7 @@ public class DPAlgorithmTest {
 
          Point2D[] simplifed =  new DPAlgorithm(polyline.points).simple(polyline.eps);
 
-         assertTrue(maxDistance(polyline.points,simplifed)<polyline.eps);
+         assertTrue(maxDistance(polyline.points,simplifed) <= polyline.eps);
          assertNotEquals(polyline.points.length, simplifed.length);
         }
     }
@@ -54,14 +55,28 @@ public class DPAlgorithmTest {
 
             Point2D[] simplifed =  new DPAlgorithm(polyline.points).simple(polyline.eps);
 
-            assertTrue(maxDistance(polyline.points,simplifed)<polyline.eps);
+            assertTrue(maxDistance(polyline.points,simplifed) <= polyline.eps);
             assertNotEquals(polyline.points.length, simplifed.length);
         }
     }
 
     @Test
     public void testRobust() throws Exception {
-        //TODO: Add test
+
+        TestPolyline[] polylines = readTestPolylines("robust");
+        for(TestPolyline polyline : polylines){
+
+            Point2D[] simplifed =  new DPAlgorithm(polyline.points).robust(polyline.eps);
+
+            assertTrue(maxDistance(polyline.points, simplifed) < polyline.eps);
+            //assertNotEquals(polyline.points.length, simplifed.length);
+            for(int i = 0; i < simplifed.length - 1; i++ )
+                for(int j = 0; j < simplifed.length - 1; j++){
+                    if(j < i - 1 || j > i + 1)
+                        assertTrue(!intersect(simplifed[i],simplifed[i+1],
+                                              simplifed[j],simplifed[j+1]));
+                }
+        }
     }
 
 

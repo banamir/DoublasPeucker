@@ -604,7 +604,7 @@ public final class Draw implements ActionListener, MouseListener, MouseMotionLis
         double ws = factorX(2*r);
         double hs = factorY(2*r);
         if (ws <= 1 && hs <= 1) pixel(x, y);
-        else offscreen.draw(new Ellipse2D.Double(xs - ws/2, ys - hs/2, ws, hs));
+        else offscreen.draw(new Ellipse2D.Double(xs - ws / 2, ys - hs / 2, ws, hs));
         draw();
     }
 
@@ -623,8 +623,16 @@ public final class Draw implements ActionListener, MouseListener, MouseMotionLis
         double ws = factorX(2*r);
         double hs = factorY(2*r);
         if (ws <= 1 && hs <= 1) pixel(x, y);
-        else offscreen.fill(new Ellipse2D.Double(xs - ws/2, ys - hs/2, ws, hs));
+        else offscreen.fill(new Ellipse2D.Double(xs - ws / 2, ys - hs / 2, ws, hs));
         draw();
+    }
+
+    public void filledCircles(Point2D[] points, double r){
+        for(int i = 0; i < points.length; i++) {
+            filledCircle(points[i].getX(),points[i].getY(),r);
+            //text(points[i].getX(),points[i].getY()," "  + points[i].getX() +"_"  + points[i].getY());
+        }
+
     }
 
 

@@ -73,13 +73,18 @@ public class Main {
                 draw.setPenDash(new float[]{2.f, 5.f}, 0.f);
 
                 draw.polyline(polyline);
-
+                draw.filledCircles(polyline, 0.01);
                 draw.setPenDash();
 
-                simplified = dpa.simple(eps);
-                draw.polyline(simplified);
+                //simplified = dpa.simple(eps);
+//                simplified = dpa.iterative(eps);
+//                draw.polyline(simplified);
                 draw.setPenColor(Color.RED);
-                simplified = dpa.simple(k);
+                //simplified = dpa.simple(k);
+                simplified = dpa.robust(eps);
+//                for(int l = 0; l < simplified.length; l++) {
+//                    draw.text(simplified[l].getX(),simplified[l].getY()," "  + simplified[l].getX() +"_"  + simplified[l].getY());
+//                }
                 draw.polyline(simplified);
             }
 

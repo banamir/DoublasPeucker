@@ -27,8 +27,8 @@ public class DPAlgorithm  {
         LinkedList<Point2D> result = new LinkedList<Point2D>();
 
         if(range.getMaxDistance() < eps){
-            result.add(polyline[range.getStart()]);
-            result.add(polyline[range.getEnd()]);
+            result.add(range.startPoint());
+            result.add(range.endPoint());
         } else {
             result.addAll(simpleRecursive(new Range(range.getStart(), range.getMaxPoint()), eps));
             result.pollLast();
@@ -58,14 +58,14 @@ public class DPAlgorithm  {
 
         int i=0;
         for(Range rang : rangeList){
-            result[i++] = polyline[rang.getStart()];
+            result[i++] = rang.startPoint();
         }
         result[i] = polyline[polyline.length-1];
 
         return result;
     }
 
-    public List<Point2D> iterative(double eps){
+    public Point2D[] iterative(double eps){
 
         List<Point2D> result = new ArrayList<Point2D>();
 
@@ -76,19 +76,63 @@ public class DPAlgorithm  {
         for(int i = 1; i < polyline.length; i++ ){
             Range info = new Range(start, i);
             if(info.getMaxDistance() >  eps){
-                start = i-1;
-                result.add(polyline[i-1]);
+                start = --i;
+                result.add(polyline[i]);
             }
         }
 
         result.add(polyline[polyline.length - 1]);
 
-        return  result;
+        return  result.toArray(new Point2D[0]);
     }
 
-    public List<Point2D> robust(double eps){
-        //TODO: Implement robust variant of the algorithm
-        return null;
+    public Point2D[] robust(double eps){
+        List<Point2D> result = new ArrayList<Point2D>();
+
+        result.add(polyline[0]);
+
+        int start = 0;
+
+      main_loop:
+        for(int i = 1; i < polyline.length; i++ ){
+            Range info = new Range(start, i);
+
+            if(info.getMaxDistance() >  eps ) {
+                do {
+                    i--;
+                }while (hasIntersection(start, i, result) && i>= start + 1);
+
+                start = i;
+                if(start == polyline.length - 1) break;
+                result.add(polyline[i]);
+
+            } else if( i == polyline.length - 1) {
+                while(hasIntersection(start, i, result) && i>= start + 1) i--;
+
+                start = i;
+                if(start == polyline.length - 1) break;
+                result.add(polyline[i]);
+            }
+
+        }
+
+        result.add(polyline[polyline.length - 1]);
+
+        return  result.toArray(new Point2D[0]);
+    }
+
+    private boolean hasIntersection(int start, int cur_pos, List<Point2D> simplified){
+        for (int j = 1; j < simplified.size() - 1; j++) {
+            if (intersect(simplified.get(j - 1), simplified.get(j), polyline[start], polyline[cur_pos])) {
+                return true;
+            }
+        }
+        for (int j = cur_pos + 2; j < polyline.length; j++) {
+            if (intersect(polyline[j - 1], polyline[j], polyline[start], polyline[cur_pos])) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public final class Range implements Comparable<Range> {
@@ -107,6 +151,9 @@ public class DPAlgorithm  {
         }
 
         int getStart() {return  start;}
+
+        Point2D startPoint() {return  polyline[start];}
+        Point2D endPoint() {return  polyline[end];}
 
         int getEnd() { return  end;}
 
