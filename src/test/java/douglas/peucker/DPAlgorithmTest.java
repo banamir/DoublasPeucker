@@ -11,7 +11,6 @@ import java.util.Scanner;
 
 import static douglas.peucker.VectorUtils.distanseToSigment;
 import static douglas.peucker.VectorUtils.intersect;
-import static douglas.peucker.VectorUtils.scalarProduct;
 import static org.junit.Assert.*;
 
 
@@ -40,7 +39,7 @@ public class DPAlgorithmTest {
 
         for(TestPolyline polyline : polylines){
 
-            Point2D[] simplifed =  new DPAlgorithm(polyline.points).simple(polyline.k);
+            Point2D[] simplifed =  new DPAlgorithm(polyline.points).simpleN(polyline.k);
 
             assertEquals(polyline.k, simplifed.length);
         }
@@ -53,7 +52,7 @@ public class DPAlgorithmTest {
 
         for(TestPolyline polyline : polylines){
 
-            Point2D[] simplifed =  new DPAlgorithm(polyline.points).simple(polyline.eps);
+            Point2D[] simplifed =  new DPAlgorithm(polyline.points).iterative(polyline.eps);
 
             assertTrue(maxDistance(polyline.points,simplifed) <= polyline.eps);
             assertNotEquals(polyline.points.length, simplifed.length);

@@ -630,7 +630,6 @@ public final class Draw implements ActionListener, MouseListener, MouseMotionLis
     public void filledCircles(Point2D[] points, double r){
         for(int i = 0; i < points.length; i++) {
             filledCircle(points[i].getX(),points[i].getY(),r);
-            //text(points[i].getX(),points[i].getY()," "  + points[i].getX() +"_"  + points[i].getY());
         }
 
     }
@@ -1008,6 +1007,11 @@ public final class Draw implements ActionListener, MouseListener, MouseMotionLis
         int hs = metrics.getDescent();
         offscreen.drawString(s, (float) xs, (float) (ys + hs));
         draw();
+    }
+
+    public FontMetrics getFontMetric(){
+        offscreen.setFont(font);
+        return offscreen.getFontMetrics();
     }
 
 

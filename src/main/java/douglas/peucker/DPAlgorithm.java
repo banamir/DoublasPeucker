@@ -7,6 +7,8 @@ import static  douglas.peucker.VectorUtils.*;
 
 public class DPAlgorithm  {
 
+    private static final double EPS = 1e-15;
+
     private Point2D[] polyline;
 
     public DPAlgorithm(Point2D[] polyline){
@@ -38,7 +40,7 @@ public class DPAlgorithm  {
         return result;
     }
 
-    public Point2D[] simple(int k){
+    public Point2D[] simpleN(int k){
 
         Point2D[] result = new Point2D[k];
 
@@ -53,7 +55,7 @@ public class DPAlgorithm  {
         }
 
         List<Range> rangeList = new ArrayList<Range>();
-        rangeList.addAll(rangeList);
+        rangeList.addAll(pq);
         Collections.sort(rangeList, new RangeStartComparator());
 
         int i=0;
@@ -119,6 +121,20 @@ public class DPAlgorithm  {
         result.add(polyline[polyline.length - 1]);
 
         return  result.toArray(new Point2D[0]);
+    }
+
+    public double maxDistance(Point2D[] simplified){
+
+        int i = 0;
+        double max_distanse = 0, distanse = 0;
+
+        for(Point2D point : polyline){
+            if(i+1 < simplified.length - 1 && point.distance(simplified[i+1]) < EPS) i++;
+            distanse = distanseToSigment(point, simplified[i],simplified[i+1]);
+            if(distanse > max_distanse) max_distanse = distanse;
+        }
+
+        return max_distanse;
     }
 
     private boolean hasIntersection(int start, int cur_pos, List<Point2D> simplified){
@@ -189,7 +205,7 @@ public class DPAlgorithm  {
     public static class RangeStartComparator implements Comparator<Range> {
 
         public int compare(Range range1, Range range2) {
-            return 0;
+            return Integer.compare(range1.start, range2.start);
         }
     }
 
