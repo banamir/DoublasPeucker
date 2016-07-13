@@ -19,22 +19,23 @@ public class DPAlgorithm  {
         this.polyline = polyline;
     }
 
+
     public Point2D[] simple(double eps){
 
-         return simpleRecursive(new Range(0,polyline.length-1),eps).toArray(new Point2D[0]);
+         return simpleRecursive(new BaseSegment(0,polyline.length-1),eps).toArray(new Point2D[0]);
     }
 
-    protected List<Point2D> simpleRecursive(Range range, double eps){
+    protected List<Point2D> simpleRecursive(BaseSegment segment, double eps){
 
         LinkedList<Point2D> result = new LinkedList<Point2D>();
 
-        if(range.getMaxDistance() < eps){
-            result.add(range.startPoint());
-            result.add(range.endPoint());
+        if(segment.getMaxDistance() < eps){
+            result.add(segment.startPoint());
+            result.add(segment.endPoint());
         } else {
-            result.addAll(simpleRecursive(new Range(range.getStart(), range.getMaxPoint()), eps));
+            result.addAll(simpleRecursive(new BaseSegment(segment.getStart(), segment.getMaxPoint()), eps));
             result.pollLast();
-            result.addAll(simpleRecursive(new Range(range.getMaxPoint(), range.getEnd()),      eps));
+            result.addAll(simpleRecursive(new BaseSegment(segment.getMaxPoint(), segment.getEnd()),      eps));
         }
 
         return result;
@@ -44,22 +45,24 @@ public class DPAlgorithm  {
 
         Point2D[] result = new Point2D[k];
 
-        PriorityQueue<Range> pq = new PriorityQueue<Range>(polyline.length);
-        pq.add(new Range(0, polyline.length - 1));
+        PriorityQueue<BaseSegment> pq = new PriorityQueue<BaseSegment>(polyline.length);
+        pq.add(new BaseSegment(0, polyline.length - 1));
 
-        for(int i=2; i<k; i++){
-            Range range = pq.poll();
-            if(range.getEnd() ==  range.getStart()) continue;
-            pq.add(new Range(range.getStart(), range.getMaxPoint()));
-            pq.add(new Range(range.getMaxPoint(),range.getEnd()));
+        for(int i=0; i < k - 2; i++){
+            BaseSegment segment = pq.poll();
+
+            if(segment.getStart() == segment.getEnd()) continue;
+
+            pq.add(new BaseSegment(segment.getStart(), segment.getMaxPoint()));
+            pq.add(new BaseSegment(segment.getMaxPoint(), segment.getEnd()));
         }
 
-        List<Range> rangeList = new ArrayList<Range>();
-        rangeList.addAll(pq);
-        Collections.sort(rangeList, new RangeStartComparator());
+        List<BaseSegment> list = new ArrayList<BaseSegment>();
+        list.addAll(pq);
+        Collections.sort(list, new RangeStartComparator());
 
         int i=0;
-        for(Range rang : rangeList){
+        for(BaseSegment rang : list){
             result[i++] = rang.startPoint();
         }
         result[i] = polyline[polyline.length-1];
@@ -76,7 +79,7 @@ public class DPAlgorithm  {
         int start = 0;
 
         for(int i = 1; i < polyline.length; i++ ){
-            Range info = new Range(start, i);
+            BaseSegment info = new BaseSegment(start, i);
             if(info.getMaxDistance() >  eps){
                 start = --i;
                 result.add(polyline[i]);
@@ -94,31 +97,25 @@ public class DPAlgorithm  {
         result.add(polyline[0]);
 
         int start = 0;
-
-      main_loop:
         for(int i = 1; i < polyline.length; i++ ){
-            Range info = new Range(start, i);
+            BaseSegment info = new BaseSegment(start, i);
 
             if(info.getMaxDistance() >  eps ) {
-                do {
-                    i--;
-                }while (hasIntersection(start, i, result) && i>= start + 1);
+                do { i--; }
+                while (hasIntersection(start, i, result) && i>= start + 1);
 
                 start = i;
-                if(start == polyline.length - 1) break;
                 result.add(polyline[i]);
 
             } else if( i == polyline.length - 1) {
-                while(hasIntersection(start, i, result) && i>= start + 1) i--;
+                while(hasIntersection(start, i, result) && i>= start + 1)
+                i--;
 
                 start = i;
-                if(start == polyline.length - 1) break;
                 result.add(polyline[i]);
             }
 
         }
-
-        result.add(polyline[polyline.length - 1]);
 
         return  result.toArray(new Point2D[0]);
     }
@@ -151,14 +148,14 @@ public class DPAlgorithm  {
         return false;
     }
 
-    public final class Range implements Comparable<Range> {
+    public final class BaseSegment implements Comparable<BaseSegment> {
 
         private final int start, end;
 
         private double max_distance = -1.0;
         private int    max_point = -1;
 
-        public Range(int start, int end){
+        public BaseSegment(int start, int end){
 
             if(0 > start || start > end || end >= polyline.length )
                 throw new IllegalArgumentException("Wrong position of part start");
@@ -166,22 +163,23 @@ public class DPAlgorithm  {
             this.start = start; this.end = end;
         }
 
-        int getStart() {return  start;}
+        public int getStart() {return  start;}
 
-        Point2D startPoint() {return  polyline[start];}
-        Point2D endPoint() {return  polyline[end];}
+        public int getEnd() { return  end;}
 
-        int getEnd() { return  end;}
+        public Point2D startPoint() {return  polyline[start];}
 
-        int getMaxPoint(){
+        public Point2D endPoint() {return  polyline[end];}
+
+        public int getMaxPoint(){
             return (max_point == -1)? findMaxPoint().max_point : max_point;
         }
 
-        double getMaxDistance(){
+        public double getMaxDistance(){
             return (max_point == -1)? findMaxPoint().max_distance : max_distance;
         }
 
-        private Range findMaxPoint(){
+        private BaseSegment findMaxPoint(){
             double disatance = 0;
 
             max_distance = 0;
@@ -196,16 +194,16 @@ public class DPAlgorithm  {
             return this;
         }
 
-        public int compareTo(Range range) {
-            return -Double.compare(this.getMaxDistance(), range.getMaxDistance());
+        public int compareTo(BaseSegment segment) {
+            return -Double.compare(this.getMaxDistance(), segment.getMaxDistance());
         }
 
     }
 
-    public static class RangeStartComparator implements Comparator<Range> {
+    public static class RangeStartComparator implements Comparator<BaseSegment> {
 
-        public int compare(Range range1, Range range2) {
-            return Integer.compare(range1.start, range2.start);
+        public int compare(BaseSegment baseSegment1, BaseSegment baseSegment2) {
+            return Integer.compare(baseSegment1.start, baseSegment2.start);
         }
     }
 

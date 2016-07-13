@@ -26,7 +26,6 @@ public final class VectorUtils {
         return intersect(a.getX(),b.getX(),c.getX(),d.getX()) &&
                 vectProduct(ab,ac) *  vectProduct(ab,ad) <=0  &&
                 vectProduct(cd,ca) *  vectProduct(cd,cb) <=0;
-
     }
 
     public static boolean intersect(double a, double b, double c, double d) {
