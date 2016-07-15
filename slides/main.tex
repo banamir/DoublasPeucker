@@ -14,6 +14,7 @@
 \usepgfplotslibrary{dateplot}
 \usepackage{movie15}
 
+\usepackage{wrapfig}
 
 \usepackage{xspace}
 \newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
@@ -21,7 +22,7 @@
 \usepackage{hyperref}
 
 \title{Douglass-Peucker Algorithm}
-\subtitle{A simplification of polyline}
+\subtitle{Polyline simplification}
 \date{\today}
 \author{Banyas Miron}
 \institute{Kyiv Algorithms Club}
@@ -39,6 +40,24 @@
 
 \section{Introduction}
 
+\begin{frame}{Polyline simplification}
+	\begin{columns}
+		\begin{column}{0.5\textwidth} 
+			\begin{figure}[h]
+				\center{\includegraphics[width=0.8\linewidth]{img/curve.eps}}
+			\end{figure}
+		\end{column}
+		\begin{column}{0.5\textwidth}
+			\begin{itemize}
+				\item \alert{A polygonal chain (polyline)} $P=\{p_1, ... ,p_N\} $  is a 
+				 	  connected series of line segments $\overline{p_ip_{i+1}}$ ($ i = \overline{1,N} $)
+				\item \alert{Polyline simplification} is the process of reducing the resolution of a polyline. 
+				      This is achieved by removing vertices and edges, while maintaining a good approximation of the original curve. 		
+			\end{itemize}
+		\end{column}
+	\end{columns}
+\end{frame}
+
 \begin{frame}{Application}
 	\begin{itemize}
 		\item \textbf{Cartography:} map generalization.
@@ -50,7 +69,7 @@
 \begin{frame}{Map Generalization}
 	\begin{figure}[h]
 			\center{\includegraphics[width=0.8\linewidth]{img/app01.png}}
-		\end{figure}
+	\end{figure}
 \end{frame}
 
 \begin{frame}{Map Generalization}
@@ -89,7 +108,7 @@
 	\end{itemize}
 \end{frame}
 
-\section{Basic Idea}
+\section{Basic idea}
 
 \begin{frame}{Problem}
 Given a simple polygonal chain $P$  (a polyline) defined by a sequence of points $p_{1},p_{2},...,p_{n}$ in the plane. 
@@ -198,7 +217,10 @@ is  minimal for a given number $k$.
 			\center{\includegraphics[width=0.5\linewidth]{img/vectors-3.eps}}
 		\end{figure}
 		\begin{align*}
-				\rho  = |\overrightarrow{r_1}|\sin\alpha = |\overrightarrow{r_1}|\frac{|r\times r_1|}{|r|}
+				\rho  = |\overrightarrow{r_1}|\sin\alpha 
+				      = |\overrightarrow{r_1}|\frac{|\overrightarrow{r} \times \overrightarrow{r_1}|}
+				                                   {|\overrightarrow{r}||\overrightarrow{r_1}|}
+				      = \frac{|\overrightarrow{r}\times \overrightarrow{r_1}|}{|\overrightarrow{r}|}
 		\end{align*}
 \end{frame}
 \begin{frame}{Improving}
