@@ -228,9 +228,16 @@ is  minimal for a given number $k$.
 			\center{\includegraphics[width=0.5\linewidth]{img/vectors-4.eps}}
 		\end{figure}
 			\begin{itemize}
-				\item{ \makebox[5cm]{if $r_2 >= \sqrt{r_1^2 + r^2}$} then $\rho=r_1$}
-				\item{ \makebox[5cm]{if $r_1 >= \sqrt{r_2^2 + r^2}$} then $\rho=r_2$}
-				\item{ \makebox[2.5cm]{} else $\rho = |\overrightarrow{r_1}|\frac{|r\times r_1|}{|r|}$}
+				\item{ \makebox[5cm]{if 
+					$\overrightarrow{r_2}^2 >= \overrightarrow{r_1}^2 + \overrightarrow{r}^2$ } 
+					then $\rho=|\overrightarrow{r_1}|$
+					}
+				\item{ \makebox[5cm]{if 
+					$\overrightarrow{r_1}^2 >= \overrightarrow{r_2}^2 + \overrightarrow{r}^2$ } 
+					then $\rho=|\overrightarrow{r_2}|$
+					}
+				\item{ \makebox[2.5cm]{} else 
+				$\rho = |\frac{|\overrightarrow{r}\times \overrightarrow{r_1}|}{|\overrightarrow{r}|}$}
 			\end{itemize}
 \end{frame}
 
