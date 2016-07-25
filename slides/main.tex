@@ -12,9 +12,8 @@
 
 \usepackage{pgfplots}
 \usepgfplotslibrary{dateplot}
-\usepackage{movie15}
-
-\usepackage{wrapfig}
+\usepackage{animate}
+\usepackage{epstopdf}
 
 \usepackage{xspace}
 \newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
@@ -44,7 +43,7 @@
 	\begin{columns}
 		\begin{column}{0.5\textwidth} 
 			\begin{figure}[h]
-				\center{\includegraphics[width=0.8\linewidth]{img/curve.eps}}
+				\center{\includegraphics[width=\linewidth]{img/curve.eps}}
 			\end{figure}
 		\end{column}
 		\begin{column}{0.5\textwidth}
@@ -158,8 +157,14 @@ is  minimal for a given number $k$.
 
 \begin{frame}{Step by Step}
 	\begin{figure}[h]
-			\center{\includegraphics[width=1.\linewidth]{img/simple.eps}}
-		\end{figure}
+			\center{
+				\animategraphics[
+						width = 0.9\linewidth ,					
+						controls, loop
+					]{1}{img/simple_}{1}{4}
+			}
+	\end{figure}
+
 \end{frame}
 
 \begin{frame}{Solving of the Alternative Problem}
@@ -178,7 +183,7 @@ is  minimal for a given number $k$.
 \begin{frame}{Vectors}
 
 		\begin{figure}[h]
-			\center{\includegraphics[width=0.5\linewidth]{img/vectors-1.eps}}
+			\center{\includegraphics[width=0.54\linewidth]{img/vectors-1.eps}}
 		\end{figure}
 		
 		\begin{align*}
@@ -315,7 +320,13 @@ is  minimal for a given number $k$.
 
 \begin{frame}{Step by Step}
 	\begin{figure}[h]
-			\center{\includegraphics[width=1.0\linewidth]{img/iterative.eps}}
+			%\center{\includegraphics[width=1.0\linewidth]{img/iterative.eps}}
+			\center{
+				\animategraphics[
+						width = 0.9\linewidth ,					
+						controls, loop
+					]{1}{img/iterative_}{1}{4}
+			}
 	\end{figure}
 \end{frame}
 
