@@ -5,21 +5,36 @@ import java.util.*;
 
 import static  douglas.peucker.VectorUtils.*;
 
+/**
+ * This class contains implementations of some variations of the
+ * Douglas-Peucker algorithm that allows to simplify a
+ * polyline. The polyline to be simplified is passed as the argument of the constructor.
+ */
 public class DPAlgorithm  {
 
     private static final double EPS = 1e-15;
 
     private Point2D[] polyline;
 
+    /**
+     * @param polyline the polyline to be simplified
+     */
     public DPAlgorithm(Point2D[] polyline){
 
         if(polyline == null && polyline.length > 2)
-            throw new IllegalArgumentException("Polyline can't be null and have at lest two point");
+            throw new IllegalArgumentException("Polyline can't be null and have at last two points");
 
         this.polyline = polyline;
     }
 
-
+    /**
+     *  implements the original algorithm variant.
+     *  It uses recursion and is non-robust i.e. concedes self-intersections
+     *  in the simplified polyline.
+     *
+     * @param eps the specified tolerance of the algorithm
+     * @return the simplified polyline
+     */
     public Point2D[] simple(double eps){
 
          return simpleRecursive(new BaseSegment(0,polyline.length-1),eps).toArray(new Point2D[0]);
@@ -41,6 +56,13 @@ public class DPAlgorithm  {
         return result;
     }
 
+    /**
+     * implements the variation of the Douglas-Peucker algorithm that
+     * produces a simplified polyline with the specified number of points.
+     *
+     * @param k the number of points
+     * @return the simplified polyline
+     */
     public Point2D[] simpleN(int k){
 
         Point2D[] result = new Point2D[k];
@@ -59,7 +81,7 @@ public class DPAlgorithm  {
 
         List<BaseSegment> list = new ArrayList<BaseSegment>();
         list.addAll(pq);
-        Collections.sort(list, new RangeStartComparator());
+        Collections.sort(list, new BaseSegmentStartComparator());
 
         int i=0;
         for(BaseSegment rang : list){
@@ -70,6 +92,13 @@ public class DPAlgorithm  {
         return result;
     }
 
+    /**
+     * implements a non-recursive and non-robust variant of
+     * the Douglas-Peucker algorithm.
+     *
+     * @param eps the specified tolerance of the algorithm
+     * @return the simplifed polyline
+     */
     public Point2D[] iterative(double eps){
 
         List<Point2D> result = new ArrayList<Point2D>();
@@ -91,6 +120,14 @@ public class DPAlgorithm  {
         return  result.toArray(new Point2D[0]);
     }
 
+    /**
+     * implements a robust algorithm variation
+     * i.e. it doesn't permit self-intersections
+     * if the original polyline doesn't contain them.
+     *
+     * @param eps the specified tolerance of the algorithm
+     * @return the simplified polyline
+     */
     public Point2D[] robust(double eps){
         List<Point2D> result = new ArrayList<Point2D>();
 
@@ -101,6 +138,7 @@ public class DPAlgorithm  {
             BaseSegment info = new BaseSegment(start, i);
 
             if(info.getMaxDistance() >  eps ) {
+
                 do { i--; }
                 while (hasIntersection(start, i, result) && i>= start + 1);
 
@@ -120,20 +158,6 @@ public class DPAlgorithm  {
         return  result.toArray(new Point2D[0]);
     }
 
-    public double maxDistance(Point2D[] simplified){
-
-        int i = 0;
-        double max_distanse = 0, distanse = 0;
-
-        for(Point2D point : polyline){
-            if(i+1 < simplified.length - 1 && point.distance(simplified[i+1]) < EPS) i++;
-            distanse = distanseToSigment(point, simplified[i],simplified[i+1]);
-            if(distanse > max_distanse) max_distanse = distanse;
-        }
-
-        return max_distanse;
-    }
-
     private boolean hasIntersection(int start, int cur_pos, List<Point2D> simplified){
         for (int j = 1; j < simplified.size() - 1; j++) {
             if (intersect(simplified.get(j - 1), simplified.get(j), polyline[start], polyline[cur_pos])) {
@@ -148,6 +172,33 @@ public class DPAlgorithm  {
         return false;
     }
 
+    /**
+     * finds the maximum distance between the original polyline
+     * and the simplified polyline
+     *
+     * @param simplified the simplified polyline
+     * @return the maximum distance
+     */
+    public double maxDistance(Point2D[] simplified){
+
+        int i = 0;
+        double max_distanse = 0, distanse = 0;
+
+        for(Point2D point : polyline){
+            if(i+1 < simplified.length - 1 && point.distance(simplified[i+1]) < EPS) i++;
+            distanse = distanseToSegment(point, simplified[i],simplified[i+1]);
+            if(distanse > max_distanse) max_distanse = distanse;
+        }
+
+        return max_distanse;
+    }
+
+
+    /**
+     * A utility inner class that allows to find the maximum distance between
+     * the base segment and all intermediate vertices of the original polyline.
+     * Also it implements a comparison of base segments by the maximum distance.
+     */
     public final class BaseSegment implements Comparable<BaseSegment> {
 
         private final int start, end;
@@ -155,6 +206,10 @@ public class DPAlgorithm  {
         private double max_distance = -1.0;
         private int    max_point = -1;
 
+        /**
+         * @param start the start vertex of the base segment
+         * @param end the end vertex of the base segment
+         */
         public BaseSegment(int start, int end){
 
             if(0 > start || start > end || end >= polyline.length )
@@ -163,18 +218,36 @@ public class DPAlgorithm  {
             this.start = start; this.end = end;
         }
 
+        /**
+         * @return the index of the start point
+         */
         public int getStart() {return  start;}
 
+        /**
+         * @return the index of the end point
+         */
         public int getEnd() { return  end;}
 
+        /**
+         * @return the start point
+         */
         public Point2D startPoint() {return  polyline[start];}
 
+        /**
+         * @return the end point
+         */
         public Point2D endPoint() {return  polyline[end];}
 
+        /**
+         * @return the vertex of the original polyline with the maximum distance
+         */
         public int getMaxPoint(){
             return (max_point == -1)? findMaxPoint().max_point : max_point;
         }
 
+        /**
+         * @return the maximum distance
+         */
         public double getMaxDistance(){
             return (max_point == -1)? findMaxPoint().max_distance : max_distance;
         }
@@ -186,7 +259,7 @@ public class DPAlgorithm  {
             max_point = start;
 
             for(int i=start; i<end; i++){
-                if((disatance = distanseToSigment(polyline[i],polyline[start],polyline[end])) >= max_distance) {
+                if((disatance = distanseToSegment(polyline[i],polyline[start],polyline[end])) >= max_distance) {
                     max_point = i;
                     max_distance = disatance;
                 }
@@ -194,13 +267,22 @@ public class DPAlgorithm  {
             return this;
         }
 
+        /**
+         * Compares two segments by the maximum distance
+         * @param segment the segment to be compared
+         * @return a negative integer, zero, or a positive integer as
+         *  this segment has the maximum distance less than, equal to, or greater than in the specified segment.
+         */
         public int compareTo(BaseSegment segment) {
             return -Double.compare(this.getMaxDistance(), segment.getMaxDistance());
         }
 
     }
 
-    public static class RangeStartComparator implements Comparator<BaseSegment> {
+    /**
+     * A comparator of a base segments by the start point
+     */
+    public static class BaseSegmentStartComparator implements Comparator<BaseSegment> {
 
         public int compare(BaseSegment baseSegment1, BaseSegment baseSegment2) {
             return Integer.compare(baseSegment1.start, baseSegment2.start);

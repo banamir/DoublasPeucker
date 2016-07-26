@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import java.awt.*;
 import java.awt.geom.Point2D;
 
 
@@ -22,46 +21,46 @@ public class VectorUtilsTest  {
         b = new Point2D.Double(1., 1.);
 
         p = new Point2D.Double(1., 1.);
-        assertEquals(0.,distanseToSigment(p,a,b),DELTA);
+        assertEquals(0., distanseToSegment(p,a,b),DELTA);
         p = new Point2D.Double(0., 1.);
-        assertEquals(1.,distanseToSigment(p,a,b),DELTA);
+        assertEquals(1., distanseToSegment(p,a,b),DELTA);
         p = new Point2D.Double(1., 3.);
-        assertEquals(2.,distanseToSigment(p,a,b),DELTA);
+        assertEquals(2., distanseToSegment(p,a,b),DELTA);
         p = new Point2D.Double(4., 1.);
-        assertEquals(3.,distanseToSigment(p,a,b),DELTA);
+        assertEquals(3., distanseToSegment(p,a,b),DELTA);
         p = new Point2D.Double(1., -3.);
-        assertEquals(4.,distanseToSigment(p,a,b),DELTA);
+        assertEquals(4., distanseToSegment(p,a,b),DELTA);
 
         p = new Point2D.Double(0., 2.);
-        assertEquals(Math.sqrt(2.),distanseToSigment(p,a,b),DELTA);
+        assertEquals(Math.sqrt(2.), distanseToSegment(p,a,b),DELTA);
         p = new Point2D.Double(2., 3.);
-        assertEquals(Math.sqrt(5.),distanseToSigment(p,a,b),DELTA);
+        assertEquals(Math.sqrt(5.), distanseToSegment(p,a,b),DELTA);
         p = new Point2D.Double(4., 0.);
-        assertEquals(Math.sqrt(10.),distanseToSigment(p,a,b),DELTA);
+        assertEquals(Math.sqrt(10.), distanseToSegment(p,a,b),DELTA);
         p = new Point2D.Double(0., -3.);
-        assertEquals(Math.sqrt(17.),distanseToSigment(p,a,b),DELTA);
+        assertEquals(Math.sqrt(17.), distanseToSegment(p,a,b),DELTA);
 
         a = new Point2D.Double(2., 2.);
         b = new Point2D.Double(8., 10.);
 
         p = new Point2D.Double(5., 6.);
-        assertEquals(0.,distanseToSigment(p,a,b),DELTA);
+        assertEquals(0., distanseToSegment(p,a,b),DELTA);
         p = new Point2D.Double(9., 3.);
-        assertEquals(5.,distanseToSigment(p,a,b),DELTA);
+        assertEquals(5., distanseToSegment(p,a,b),DELTA);
         p = new Point2D.Double(1., 9.);
-        assertEquals(5.,distanseToSigment(p,a,b),DELTA);
+        assertEquals(5., distanseToSegment(p,a,b),DELTA);
         p = new Point2D.Double(2., -2.);
-        assertEquals(4.,distanseToSigment(p,a,b),DELTA);
+        assertEquals(4., distanseToSegment(p,a,b),DELTA);
         p = new Point2D.Double(-2., 2.);
-        assertEquals(4.,distanseToSigment(p,a,b),DELTA);
+        assertEquals(4., distanseToSegment(p,a,b),DELTA);
         p = new Point2D.Double(0., 0.);
-        assertEquals(2.*Math.sqrt(2.),distanseToSigment(p,a,b),DELTA);
+        assertEquals(2.*Math.sqrt(2.), distanseToSegment(p,a,b),DELTA);
         p = new Point2D.Double(11., 10.);
-        assertEquals(3.,distanseToSigment(p,a,b),DELTA);
+        assertEquals(3., distanseToSegment(p,a,b),DELTA);
         p = new Point2D.Double(8., 13.);
-        assertEquals(3.,distanseToSigment(p,a,b),DELTA);
+        assertEquals(3., distanseToSegment(p,a,b),DELTA);
         p = new Point2D.Double(10., 12.);
-        assertEquals(2.*Math.sqrt(2.),distanseToSigment(p,a,b),DELTA);
+        assertEquals(2.*Math.sqrt(2.), distanseToSegment(p,a,b),DELTA);
 
 
     }

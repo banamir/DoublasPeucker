@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.Scanner;
 
-import static douglas.peucker.VectorUtils.distanseToSigment;
+import static douglas.peucker.VectorUtils.distanseToSegment;
 import static douglas.peucker.VectorUtils.intersect;
 import static org.junit.Assert.*;
 
@@ -118,7 +118,7 @@ public class DPAlgorithmTest {
 
         for(Point2D point : polyline){
             if(i+1 < simplified.length - 1 && point.distance(simplified[i+1]) < EPS) i++;
-            distanse = distanseToSigment(point, simplified[i],simplified[i+1]);
+            distanse = distanseToSegment(point, simplified[i],simplified[i+1]);
             if(distanse > max_distanse) max_distanse = distanse;
         }
 

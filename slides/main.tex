@@ -61,7 +61,7 @@
 	\begin{itemize}
 		\item \textbf{Cartography:} map generalization.
 		\item \textbf{Vector graphics.}
-		\item \textbf{Robotics:} denoising of baseSegment data acquired by a rotating baseSegment scanner.
+		\item \textbf{Robotics:} denoising of range data acquired by a rotating range scanner.
 	\end{itemize}
 \end{frame}
 
@@ -138,7 +138,7 @@ is  minimal for a given number $k$.
 			  %and the base segment defined in the previous step are
 			  %computed. The points considered from the original line in this
 			  %step are those between the points that form the base segment.
-			  The point $p_k$ ($s <  k < e$) with a maximal distance $\rho_{max}$ 
+			  The point $p_k$ ($s <  k < e$) with the maximum distance $\rho_{max}$ 
 			  to the base segment defined in the previous step is found. 
 		\item %The algorithm goes back to the first step, and considers now all
 			  %the previously added vertices to the output line as fixed (the
@@ -147,7 +147,7 @@ is  minimal for a given number $k$.
 		      %the new base segments.	
 		      If $\rho_{max} \geq \varepsilon$ the resulting polyline is computed 
 		      as a union of algorithm results on $\overline{p_{s}p_k}$ 
-		      and $\overline{p_kp_{e}}$   base segment.
+		      and $\overline{p_kp_{e}}$ base segments.
 		\item %When no more points belonging to the original polyline are
 			  %farther away than the tolerance from the correspondent base
 			  %segment, the algorithm concludes.      
@@ -170,10 +170,10 @@ is  minimal for a given number $k$.
 \begin{frame}{Solving of the Alternative Problem}
 	The solving of the alternative problem is similar to the initial technique.
 	\begin{itemize}
-		\item At each iteration the algorithm finds the base segment with a maximal distance
+		\item At each iteration the algorithm finds the base segment with the maximal distance
 		and divides it, as in the original algorithm. The resulting base segments are kept
 		for the subsequent iterations.
-		\item It is useful to use a priority queue for storage of base segments.  
+		\item It is useful to use a \alert{priority queue} for storage of base segments.  
 	\end{itemize}
 	
 \end{frame}
@@ -257,7 +257,7 @@ is  minimal for a given number $k$.
 	$$
 		T(n) \in \Theta(n \log(n))
 	$$ 
-	The \textbf{worst-case} complexity is $O(n^2)$	  
+	The \textbf{worst-case} complexity is $\Theta(n^2)$	  
 \end{frame}
 
 \begin{frame}{Optimality}
